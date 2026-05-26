@@ -1,0 +1,30 @@
+{
+  "n_records": 1001280,
+  "n_cells": 20860,
+  "awake_range": [
+    0.4966666666666667,
+    1.0
+  ],
+  "load_range": [
+    0.0,
+    0.9962000000000001
+  ],
+  "power_range": [
+    68.0,
+    810.3906579959161
+  ],
+  "R2_pooled": 0.19938043558352037,
+  "fixed_effects_fit": {
+    "awake_swing_W": 69.33209887633133,
+    "P1_load_slope_W": 482.3104931996239,
+    "R2_within": 0.7073600146978498,
+    "MAPE_within_pct": 4.04354023879248
+  },
+  "sim_defaults": {
+    "P_sleep_W": 8.0,
+    "P0_W": 130.0,
+    "P1_W": 100.0,
+    "awake_swing_W": 122.0
+  },
+  "source": "Tsinghua FIB-Lab NetData, 5G weekday (partial 13.6 MB)"
+}

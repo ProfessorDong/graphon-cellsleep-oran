@@ -1,0 +1,22 @@
+# Raw third-party traces are NOT redistributed (license + size).
+# Download them from their original sources; see sim/data/README.md.
+sim/data/*.txt
+sim/data/*.csv
+sim/data/*.zip
+sim/data/*.npz
+sim/data/shanghai_telecom/
+sim/data/netmob2023/
+sim/data/netdata/*.csv
+sim/data/hf5g/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.ipynb_checkpoints/
+.venv/
+venv/
+
+# OS / editor
+.DS_Store
+*.swp
