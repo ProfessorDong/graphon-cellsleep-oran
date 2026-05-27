@@ -259,10 +259,10 @@ def fig_graphon(in_path: str, out_path: str):
     qb_g = np.array(d["graphon_eval"]["queue_by_block"])
     qb_s = np.array(d["scalar_eval"]["queue_by_block"])
 
-    with plt.rc_context({"font.size": 15, "axes.labelsize": 16,
-                          "axes.titlesize": 16, "legend.fontsize": 14,
-                          "xtick.labelsize": 14, "ytick.labelsize": 14,
-                          "figure.titlesize": 17}):
+    with plt.rc_context({"font.size": 11, "axes.labelsize": 12,
+                          "axes.titlesize": 12, "legend.fontsize": 10,
+                          "xtick.labelsize": 10, "ytick.labelsize": 10,
+                          "figure.titlesize": 13}):
         fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(9.4, 3.8))
         # Left: spatial awake-density profile
         ax1.plot(blocks, alpha_g, "o-", ms=9, lw=2, color="#1f77b4",
