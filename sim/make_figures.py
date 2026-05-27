@@ -197,8 +197,8 @@ def fig_pareto(in_path: str, out_path: str):
 
 def fig_comparative(in_path: str, out_path: str):
     with open(in_path) as f: d = json.load(f)
-    with plt.rc_context({"font.size": 16, "axes.labelsize": 19,
-                          "xtick.labelsize": 14, "ytick.labelsize": 14}):
+    with plt.rc_context({"font.size": 13, "axes.labelsize": 14,
+                          "xtick.labelsize": 12, "ytick.labelsize": 12}):
         fig, axes = plt.subplots(1, 3, figsize=(11.0, 3.7), sharey=True)
         for ax, name, expected in zip(
                 axes, ["c_p", "c_q", "c_s"],
@@ -211,11 +211,11 @@ def fig_comparative(in_path: str, out_path: str):
             ax.plot(xs, ys, "o-", ms=9, lw=2.0, color="#1f77b4")
             ax.set_xscale("log" if name in ("c_p", "c_q", "c_s") else "linear")
             ax.set_xlabel(rf"${name[0]}_{{{name[2]}}}$")
-            ax.set_title(expected, fontsize=18)
+            ax.set_title(expected, fontsize=15)
             ax.grid(True, ls="--", alpha=0.4, which="both")
         axes[0].set_ylabel(r"MFE awake density $\alpha^*$")
         fig.suptitle(f"Comparative statics: signed price sensitivities "
-                      f"({d['layout']}, $N$={d['N']})", y=1.03, fontsize=18)
+                      f"({d['layout']}, $N$={d['N']})", y=1.03, fontsize=15)
         fig.tight_layout()
         fig.savefig(out_path)
     plt.close(fig)
