@@ -467,7 +467,7 @@ def fig_energy(in_path: str, out_path: str):
         ax.text(0.04, 0.96, txt, transform=ax.transAxes, va="top", ha="left",
                 fontsize=13, bbox=dict(boxstyle="round", fc="white", ec="0.7", alpha=0.9))
         ax.grid(True, ls="--", alpha=0.4)
-        ax.legend(loc="lower right", fontsize=14)
+        ax.legend(loc="lower right", fontsize=14, framealpha=0.5)
         fig.tight_layout()
         fig.savefig(out_path)
     plt.close(fig)
