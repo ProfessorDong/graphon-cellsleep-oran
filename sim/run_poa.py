@@ -75,11 +75,19 @@ def main():
                      default=[0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0])
     ap.add_argument("--tolls", type=float, nargs="+",
                      default=[0.0, 10.0, 20.0, 40.0, 80.0, 160.0])
+    ap.add_argument("--lambda0", type=float, default=None,
+                     help="override baseline arrival (with --eps_lambda, sets load-shift strength)")
+    ap.add_argument("--eps_lambda", type=float, default=None,
+                     help="override load-shift regularizer; large value => weak load shifting")
+    ap.add_argument("--c_q", type=float, default=None, help="override queue price")
     ap.add_argument("--out", default="sim/results/poa.json")
     args = ap.parse_args()
 
     cfg = default_cfg(); cfg.topo.N = args.N; cfg.topo.layout = args.layout
     cfg.chan.eta_I = args.eta_I
+    if args.lambda0 is not None:    cfg.arr.lambda0_pdu_per_s = args.lambda0
+    if args.eps_lambda is not None: cfg.chan.epsilon_lambda = args.eps_lambda
+    if args.c_q is not None:        cfg.cost.c_q = args.c_q
     cfg.solver.kappa = 0.1
     pos, fac = make_layout_and_arrivals(cfg)
     seeds = canonical_seeds(args.n_seeds)
@@ -120,6 +128,7 @@ def main():
         # social cost), so we recompute J without the toll term.
         cfg_eval = default_cfg(); cfg_eval.topo.N = args.N
         cfg_eval.topo.layout = args.layout; cfg_eval.chan.eta_I = args.eta_I  # toll=0 for J
+        if args.c_q is not None: cfg_eval.cost.c_q = args.c_q  # match social-curve pricing
         Js = [cfg_eval.cost.c_q * r["Qbar"] + cfg_eval.cost.c_p * r["Pbar_per"]
               + cfg_eval.cost.c_s * 0.0 for r in rows]
         a_mfe = float(np.mean([r["alpha"] for r in rows]))
