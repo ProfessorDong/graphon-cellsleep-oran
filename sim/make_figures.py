@@ -212,8 +212,8 @@ def fig_comparative(in_path: str, out_path: str):
         ax.set_title(expected, fontsize=10)
         ax.grid(True, ls="--", alpha=0.4, which="both")
     axes[0].set_ylabel(r"MFE awake density $\alpha^*$")
-    fig.suptitle(f"Comparative statics (Lemma 2), {d['layout']} N={d['N']}",
-                  y=1.02, fontsize=12)
+    fig.suptitle(f"Comparative statics: signed price sensitivities "
+                  f"({d['layout']}, $N$={d['N']})", y=1.02, fontsize=12)
     fig.tight_layout()
     fig.savefig(out_path)
     plt.close(fig)
@@ -389,6 +389,88 @@ def fig_poa(in_path: str, out_path: str):
     print(f"  wrote {out_path}")
 
 
+def fig_crossval(results_dir: str, out_path: str):
+    """Cross-dataset robustness (Milan vs Shanghai): (left) the graphon
+    MFE awake-density profile rises with traffic intensity on BOTH real
+    topologies, while each scalar model collapses to one value; (right)
+    the price of anarchy grows with the interference coupling on both,
+    the coordination collapse of Theorem 4 reproducing across datasets."""
+    def _load(name):
+        p = os.path.join(results_dir, name)
+        return json.load(open(p)) if os.path.exists(p) else None
+    gm, gs = _load("graphon.json"), _load("graphon_shanghai.json")
+    pm, ps = _load("poa_sweep.json"), _load("poa_sweep_shanghai.json")
+    if not all([gm, gs, pm, ps]):
+        print("  SKIP f10_crossval (missing cross-dataset results)"); return
+
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(9.4, 3.7))
+    # Left: graphon awake-density profile, both datasets
+    for d, c, mk, lab in [(gm, "#1f77b4", "o", "Milan"),
+                           (gs, "#d62728", "s", "Shanghai")]:
+        ab = np.array(d["alpha_blocks_star"]); B = d["B"]
+        ax1.plot(np.arange(B), ab, marker=mk, ms=8, lw=2, color=c,
+                 label=f"{lab} graphon $\\alpha^*_b$")
+        ax1.axhline(d["scalar_alpha_star"], ls="--", lw=1.3, color=c, alpha=0.6)
+    ax1.set_xticks(np.arange(gm["B"]))
+    ax1.set_xticklabels([f"B{b}" for b in range(gm["B"])])
+    ax1.set_xlabel("traffic-intensity block (low $\\to$ high)")
+    ax1.set_ylabel("MFE awake density $\\alpha^*_b$")
+    ax1.set_title("Non-flat profile (dashed = scalar MFE)")
+    ax1.grid(True, ls="--", alpha=0.4)
+    ax1.legend(loc="upper left", fontsize=9)
+    # Right: PoA vs eta_I, both datasets
+    for d, c, mk, lab in [(pm, "#1f77b4", "o", "Milan"),
+                           (ps, "#d62728", "s", "Shanghai")]:
+        ax2.plot(d["etas"], d["poa"], marker=mk, ms=7, lw=2, color=c,
+                 label=f"{lab}")
+    ax2.axhline(1.0, ls=":", color="gray", lw=1)
+    ax2.set_xlabel("interference coupling $\\eta_I$")
+    ax2.set_ylabel("price of anarchy $J_{\\mathrm{MFE}}/J_{\\mathrm{MFC}}$")
+    ax2.set_title("Coordination collapse")
+    ax2.grid(True, ls="--", alpha=0.4)
+    ax2.legend(loc="upper left", fontsize=9)
+    fig.suptitle("Cross-dataset replication on real topologies ($N$=100)",
+                 y=1.02, fontsize=12)
+    fig.tight_layout()
+    fig.savefig(out_path)
+    plt.close(fig)
+    print(f"  wrote {out_path}")
+
+
+def fig_energy(in_path: str, out_path: str):
+    """NetData power-model calibration: within-cell measured vs
+    model-predicted power deviation, supporting the affine-in-awake,
+    load-proportional running cost of the HJB. Annotates the in-sample
+    and out-of-sample fit quality."""
+    with open(in_path) as f: d = json.load(f)
+    sc = d.get("scatter")
+    if sc is None:
+        print("  SKIP f11_energy (no scatter in energy_calib.json)"); return
+    x = np.array(sc["Pd_pred"]); y = np.array(sc["Pd_meas"])
+    fe = d["fixed_effects_fit"]; oos = d.get("out_of_sample", {})
+    fig, ax = plt.subplots(figsize=(5.2, 4.0))
+    ax.scatter(x, y, s=5, alpha=0.25, color="#1f77b4", edgecolors="none")
+    lim = np.percentile(np.abs(np.concatenate([x, y])), 99)
+    ax.plot([-lim, lim], [-lim, lim], "k--", lw=1.2, label="identity")
+    ax.set_xlim(-lim, lim); ax.set_ylim(-lim, lim)
+    ax.set_xlabel("model-predicted power deviation (W)")
+    ax.set_ylabel("measured within-cell power deviation (W)")
+    ax.set_title("NetData power-model calibration\n"
+                 f"({d['n_records']:,} records, {d['n_cells']:,} cells)")
+    txt = (f"within-cell $R^2$={fe['R2_within']:.2f}, MAPE={fe['MAPE_within_pct']:.1f}%\n"
+           f"out-of-sample $R^2$={oos.get('R2_oos',0):.2f}, "
+           f"MAPE={oos.get('MAPE_oos_pct',0):.1f}%\n"
+           f"awake swing {fe['awake_swing_W']:.0f} W, $P_1$={fe['P1_load_slope_W']:.0f} W")
+    ax.text(0.04, 0.96, txt, transform=ax.transAxes, va="top", ha="left",
+            fontsize=9, bbox=dict(boxstyle="round", fc="white", ec="0.7", alpha=0.9))
+    ax.grid(True, ls="--", alpha=0.4)
+    ax.legend(loc="lower right", fontsize=9)
+    fig.tight_layout()
+    fig.savefig(out_path)
+    plt.close(fig)
+    print(f"  wrote {out_path}")
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--results_dir", default="sim/results")
@@ -413,6 +495,12 @@ def main():
             fn(ipath, opath)
         else:
             print(f"  SKIP {ofn} (missing {ipath})")
+
+    # Cross-dataset robustness figure reads several result files at once.
+    fig_crossval(args.results_dir, os.path.join(args.fig_dir, "f10_crossval.pdf"))
+    ep = os.path.join(args.results_dir, "energy_calib.json")
+    if os.path.exists(ep):
+        fig_energy(ep, os.path.join(args.fig_dir, "f11_energy.pdf"))
 
 
 if __name__ == "__main__":

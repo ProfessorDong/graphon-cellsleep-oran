@@ -115,6 +115,12 @@ def main():
           f"MAPE = {mape_oos:.1f}%% over {int(te.sum())} records "
           f"in {len(cells)-n_train} cells.")
 
+    # ---- plotting subsample: within-cell measured vs predicted power ----
+    Pd_hat = Xw @ bw
+    rng2 = np.random.default_rng(7)
+    idx = rng2.choice(len(P), size=min(4000, len(P)), replace=False)
+    scatter = {"Pd_meas": Pd[idx].tolist(), "Pd_pred": Pd_hat[idx].tolist()}
+
     print(f"\n  Pooled fit R^2 = {R2_pool:.3f} (hardware heterogeneity dominates).")
     print(f"  Within-cell fixed-effects fit (structural law):")
     print(f"    awake swing  (P0 - P_sleep) = {awake_swing:7.1f} W")
@@ -140,6 +146,7 @@ def main():
         "out_of_sample": {"train_frac": 0.8, "n_test_cells": int(len(cells)-n_train),
                            "n_test_records": int(te.sum()),
                            "R2_oos": float(R2_oos), "MAPE_oos_pct": mape_oos},
+        "scatter": scatter,
         "sim_defaults": {"P_sleep_W": 8.0, "P0_W": 130.0, "P1_W": 100.0,
                           "awake_swing_W": 122.0},
         "source": "Tsinghua FIB-Lab NetData, 5G weekday",
