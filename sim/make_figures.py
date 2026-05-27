@@ -84,7 +84,7 @@ def fig_convergence(in_path: str, out_path: str):
                  lw=1.0, alpha=0.6, label="ref $\\rho^n,\\ \\rho=0.7$")
     ax.set_xlabel("FB iteration $n$", fontsize=14)
     ax.set_ylabel(r"$\Vert\alpha^{(n+1)}-\alpha^{(n)}\Vert_{\infty}$", fontsize=14)
-    ax.set_title(f"FB-PDE convergence (N={d['N']}, {d['layout']})", fontsize=14)
+    ax.set_title(f"FB-PDE convergence (N={d['N']}, {d['layout'].capitalize()})", fontsize=14)
     ax.grid(True, ls="--", alpha=0.4, which="both")
     ax.legend(loc="lower left", framealpha=0.95, fontsize=12.5)
     fig.tight_layout()
@@ -124,7 +124,7 @@ def fig_eps_nash(in_path: str, out_path: str):
     ax.set_ylim(bottom=0)
     ax.set_xlabel("$N$ (number of cells)")
     ax.set_ylabel(r"empirical $\varepsilon$-Nash gap (per cell)")
-    ax.set_title(rf"Best-response $\varepsilon$-Nash gap on {d['layout']} topology")
+    ax.set_title(rf"Best-response $\varepsilon$-Nash gap on {d['layout'].capitalize()} topology")
     ax.grid(True, ls="--", alpha=0.4, which="both")
     ax.legend(loc="upper right", fontsize=8.5)
     fig.tight_layout()
@@ -157,7 +157,7 @@ def fig_headline(in_path: str, out_path: str, N_pick: int | None = None):
                      label=_disp(n))
     ax.set_xlabel("Average cluster power (kW)")
     ax.set_ylabel("Time-averaged queue $\\bar Q$ (PDU)")
-    ax.set_title(f"Energy/queue operating points at N={N_pick} ({d['layout']})")
+    ax.set_title(f"Energy/queue operating points at N={N_pick} ({d['layout'].capitalize()})")
     ax.grid(True, ls="--", alpha=0.4)
     ax.legend(loc="upper left", framealpha=0.95)
     fig.tight_layout()
@@ -215,7 +215,7 @@ def fig_comparative(in_path: str, out_path: str):
             ax.grid(True, ls="--", alpha=0.4, which="both")
         axes[0].set_ylabel(r"MFE awake density $\alpha^*$")
         fig.suptitle(f"Comparative statics: signed price sensitivities "
-                      f"({d['layout']}, $N$={d['N']})", y=1.03, fontsize=15)
+                      f"({d['layout'].capitalize()}, $N$={d['N']})", y=1.03, fontsize=15)
         fig.tight_layout()
         fig.savefig(out_path)
     plt.close(fig)
@@ -237,7 +237,7 @@ def fig_alpha_traj(in_path: str, out_path: str):
                     label=fr"$\alpha^{{(0)}}={run['alpha_init']}$: $\bar\alpha^*={run['alpha_final_mean']:.3f}$")
     ax.set_xlabel("normalized time over horizon")
     ax.set_ylabel(r"MFE awake density $\alpha^*(t)$")
-    ax.set_title(f"MFE awake-density profile (N={d['N']}, {d['layout']})")
+    ax.set_title(f"MFE awake-density profile (N={d['N']}, {d['layout'].capitalize()})")
     ax.grid(True, ls="--", alpha=0.4)
     ax.legend(loc="best", framealpha=0.95)
     fig.tight_layout()
@@ -288,7 +288,7 @@ def fig_graphon(in_path: str, out_path: str):
         ax2.set_title(f"Per-region QoS disparity ({disp:.1f}$\\times$)")
         ax2.grid(True, ls="--", alpha=0.4, axis="y")
         ax2.legend(loc="upper left", framealpha=0.95)
-        fig.suptitle(f"Graphon MFG on {d['layout']} topology "
+        fig.suptitle(f"Graphon MFG on {d['layout'].capitalize()} topology "
                      f"($N$={d['N']}, $B$={B})", y=1.02)
         fig.tight_layout()
         fig.savefig(out_path)
@@ -324,7 +324,7 @@ def fig_bifurcation(in_path: str, out_path: str):
     ax.set_xlabel(r"interference coupling $\eta_I$", fontsize=14)
     ax.set_ylabel(r"MFE awake density $\alpha^\star$", fontsize=14)
     ax.set_ylim(0, 1.02)
-    ax.set_title(f"Equilibrium bifurcation ({d['layout']}, $N$={d['N']})",
+    ax.set_title(f"Equilibrium bifurcation ({d['layout'].capitalize()}, $N$={d['N']})",
                  fontsize=14)
     ax.grid(True, ls="--", alpha=0.4)
     ax.legend(loc="lower left", fontsize=11.5)
