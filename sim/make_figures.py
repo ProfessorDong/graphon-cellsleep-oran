@@ -345,9 +345,9 @@ def fig_poa(in_path: str, out_path: str):
     poa = np.array(sweep["poa"])
     a_mfe = np.array(sweep["alpha_mfe"]); a_mfc = np.array(sweep["alpha_mfc"])
 
-    with plt.rc_context({"font.size": 16, "axes.labelsize": 18,
-                          "axes.titlesize": 18, "xtick.labelsize": 14,
-                          "ytick.labelsize": 14}):
+    with plt.rc_context({"font.size": 12, "axes.labelsize": 13,
+                          "axes.titlesize": 13, "xtick.labelsize": 11,
+                          "ytick.labelsize": 11}):
         fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(9.6, 3.9))
         # Left: PoA + awake densities vs eta
         c1 = "#d62728"
@@ -366,7 +366,7 @@ def fig_poa(in_path: str, out_path: str):
         ax1.set_title("Coordination collapse")
         lines = ax1.get_lines()[:1] + axb.get_lines()
         ax1.legend(lines, [l.get_label() for l in lines], loc="center left",
-                   fontsize=14, framealpha=0.95)
+                   fontsize=12, framealpha=0.95)
 
         # Right: subsidy sweep at eta=6
         tc = tolld["toll_curve"]
@@ -384,7 +384,7 @@ def fig_poa(in_path: str, out_path: str):
         ax2.set_yscale("log")
         ax2.set_title(f"Subsidy closes the gap ($\\eta_I$=6, PoA={tolld['poa']:.1f}$\\times$)")
         ax2.grid(True, ls="--", alpha=0.4, which="both")
-        ax2.legend(loc="upper right", fontsize=14, framealpha=0.95)
+        ax2.legend(loc="upper right", fontsize=12, framealpha=0.95)
         fig.tight_layout()
         fig.savefig(out_path)
     plt.close(fig)
@@ -405,36 +405,39 @@ def fig_crossval(results_dir: str, out_path: str):
     if not all([gm, gs, pm, ps]):
         print("  SKIP f10_crossval (missing cross-dataset results)"); return
 
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(9.4, 3.7))
-    # Left: graphon awake-density profile, both datasets
-    for d, c, mk, lab in [(gm, "#1f77b4", "o", "Milan"),
-                           (gs, "#d62728", "s", "Shanghai")]:
-        ab = np.array(d["alpha_blocks_star"]); B = d["B"]
-        ax1.plot(np.arange(B), ab, marker=mk, ms=8, lw=2, color=c,
-                 label=f"{lab} graphon $\\alpha^*_b$")
-        ax1.axhline(d["scalar_alpha_star"], ls="--", lw=1.3, color=c, alpha=0.6)
-    ax1.set_xticks(np.arange(gm["B"]))
-    ax1.set_xticklabels([f"B{b}" for b in range(gm["B"])])
-    ax1.set_xlabel("traffic-intensity block (low $\\to$ high)")
-    ax1.set_ylabel("MFE awake density $\\alpha^*_b$")
-    ax1.set_title("Non-flat profile (dashed = scalar MFE)")
-    ax1.grid(True, ls="--", alpha=0.4)
-    ax1.legend(loc="upper left", fontsize=9)
-    # Right: PoA vs eta_I, both datasets
-    for d, c, mk, lab in [(pm, "#1f77b4", "o", "Milan"),
-                           (ps, "#d62728", "s", "Shanghai")]:
-        ax2.plot(d["etas"], d["poa"], marker=mk, ms=7, lw=2, color=c,
-                 label=f"{lab}")
-    ax2.axhline(1.0, ls=":", color="gray", lw=1)
-    ax2.set_xlabel("interference coupling $\\eta_I$")
-    ax2.set_ylabel("price of anarchy $J_{\\mathrm{MFE}}/J_{\\mathrm{MFC}}$")
-    ax2.set_title("Coordination collapse")
-    ax2.grid(True, ls="--", alpha=0.4)
-    ax2.legend(loc="upper left", fontsize=9)
-    fig.suptitle("Cross-dataset replication on real topologies ($N$=100)",
-                 y=1.02, fontsize=12)
-    fig.tight_layout()
-    fig.savefig(out_path)
+    with plt.rc_context({"font.size": 12, "axes.labelsize": 13,
+                          "axes.titlesize": 13, "xtick.labelsize": 11,
+                          "ytick.labelsize": 11}):
+        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(9.4, 3.7))
+        # Left: graphon awake-density profile, both datasets
+        for d, c, mk, lab in [(gm, "#1f77b4", "o", "Milan"),
+                               (gs, "#d62728", "s", "Shanghai")]:
+            ab = np.array(d["alpha_blocks_star"]); B = d["B"]
+            ax1.plot(np.arange(B), ab, marker=mk, ms=8, lw=2, color=c,
+                     label=f"{lab} graphon $\\alpha^*_b$")
+            ax1.axhline(d["scalar_alpha_star"], ls="--", lw=1.3, color=c, alpha=0.6)
+        ax1.set_xticks(np.arange(gm["B"]))
+        ax1.set_xticklabels([f"B{b}" for b in range(gm["B"])])
+        ax1.set_xlabel("traffic-intensity block (low $\\to$ high)")
+        ax1.set_ylabel("MFE awake density $\\alpha^*_b$")
+        ax1.set_title("Non-flat profile (dashed = scalar MFE)")
+        ax1.grid(True, ls="--", alpha=0.4)
+        ax1.legend(loc="upper left", fontsize=11)
+        # Right: PoA vs eta_I, both datasets
+        for d, c, mk, lab in [(pm, "#1f77b4", "o", "Milan"),
+                               (ps, "#d62728", "s", "Shanghai")]:
+            ax2.plot(d["etas"], d["poa"], marker=mk, ms=7, lw=2, color=c,
+                     label=f"{lab}")
+        ax2.axhline(1.0, ls=":", color="gray", lw=1)
+        ax2.set_xlabel("interference coupling $\\eta_I$")
+        ax2.set_ylabel("price of anarchy $J_{\\mathrm{MFE}}/J_{\\mathrm{MFC}}$")
+        ax2.set_title("Coordination collapse")
+        ax2.grid(True, ls="--", alpha=0.4)
+        ax2.legend(loc="upper left", fontsize=11)
+        fig.suptitle("Cross-dataset replication on real topologies ($N$=100)",
+                     y=1.02, fontsize=14)
+        fig.tight_layout()
+        fig.savefig(out_path)
     plt.close(fig)
     print(f"  wrote {out_path}")
 
