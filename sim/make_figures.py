@@ -448,25 +448,28 @@ def fig_energy(in_path: str, out_path: str):
         print("  SKIP f11_energy (no scatter in energy_calib.json)"); return
     x = np.array(sc["Pd_pred"]); y = np.array(sc["Pd_meas"])
     fe = d["fixed_effects_fit"]; oos = d.get("out_of_sample", {})
-    fig, ax = plt.subplots(figsize=(5.2, 4.0))
-    ax.scatter(x, y, s=5, alpha=0.25, color="#1f77b4", edgecolors="none")
-    lim = np.percentile(np.abs(np.concatenate([x, y])), 99)
-    ax.plot([-lim, lim], [-lim, lim], "k--", lw=1.2, label="identity")
-    ax.set_xlim(-lim, lim); ax.set_ylim(-lim, lim)
-    ax.set_xlabel("model-predicted power deviation (W)")
-    ax.set_ylabel("measured within-cell power deviation (W)")
-    ax.set_title("NetData power-model calibration\n"
-                 f"({d['n_records']:,} records, {d['n_cells']:,} cells)")
-    txt = (f"within-cell $R^2$={fe['R2_within']:.2f}, MAPE={fe['MAPE_within_pct']:.1f}%\n"
-           f"out-of-sample $R^2$={oos.get('R2_oos',0):.2f}, "
-           f"MAPE={oos.get('MAPE_oos_pct',0):.1f}%\n"
-           f"awake swing {fe['awake_swing_W']:.0f} W, $P_1$={fe['P1_load_slope_W']:.0f} W")
-    ax.text(0.04, 0.96, txt, transform=ax.transAxes, va="top", ha="left",
-            fontsize=9, bbox=dict(boxstyle="round", fc="white", ec="0.7", alpha=0.9))
-    ax.grid(True, ls="--", alpha=0.4)
-    ax.legend(loc="lower right", fontsize=9)
-    fig.tight_layout()
-    fig.savefig(out_path)
+    with plt.rc_context({"font.size": 15, "axes.labelsize": 17,
+                          "axes.titlesize": 16, "xtick.labelsize": 14,
+                          "ytick.labelsize": 14}):
+        fig, ax = plt.subplots(figsize=(5.6, 4.4))
+        ax.scatter(x, y, s=6, alpha=0.25, color="#1f77b4", edgecolors="none")
+        lim = np.percentile(np.abs(np.concatenate([x, y])), 99)
+        ax.plot([-lim, lim], [-lim, lim], "k--", lw=1.5, label="identity")
+        ax.set_xlim(-lim, lim); ax.set_ylim(-lim, lim)
+        ax.set_xlabel("model-predicted power deviation (W)")
+        ax.set_ylabel("measured power deviation (W)")
+        ax.set_title("NetData power-model calibration\n"
+                     f"({d['n_records']:,} records, {d['n_cells']:,} cells)")
+        txt = (f"within-cell $R^2$={fe['R2_within']:.2f}, MAPE={fe['MAPE_within_pct']:.1f}%\n"
+               f"out-of-sample $R^2$={oos.get('R2_oos',0):.2f}, "
+               f"MAPE={oos.get('MAPE_oos_pct',0):.1f}%\n"
+               f"awake swing {fe['awake_swing_W']:.0f} W, $P_1$={fe['P1_load_slope_W']:.0f} W")
+        ax.text(0.04, 0.96, txt, transform=ax.transAxes, va="top", ha="left",
+                fontsize=13, bbox=dict(boxstyle="round", fc="white", ec="0.7", alpha=0.9))
+        ax.grid(True, ls="--", alpha=0.4)
+        ax.legend(loc="lower right", fontsize=14)
+        fig.tight_layout()
+        fig.savefig(out_path)
     plt.close(fig)
     print(f"  wrote {out_path}")
 
