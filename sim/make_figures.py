@@ -82,9 +82,9 @@ def fig_convergence(in_path: str, out_path: str):
     ref = 0.7 ** np.arange(n_max)
     ax.semilogy(np.arange(1, n_max + 1), ref * res[0] * 1.5, "k--",
                  lw=1.0, alpha=0.6, label="ref $\\rho^n,\\ \\rho=0.7$")
-    ax.set_xlabel("FB iteration $n$")
-    ax.set_ylabel(r"$\Vert\alpha^{(n+1)}-\alpha^{(n)}\Vert_{\infty}$")
-    ax.set_title(f"FB-PDE convergence (N={d['N']}, {d['layout']})")
+    ax.set_xlabel("FB iteration $n$", fontsize=14)
+    ax.set_ylabel(r"$\Vert\alpha^{(n+1)}-\alpha^{(n)}\Vert_{\infty}$", fontsize=14)
+    ax.set_title(f"FB-PDE convergence (N={d['N']}, {d['layout']})", fontsize=14)
     ax.grid(True, ls="--", alpha=0.4, which="both")
     ax.legend(loc="lower left", framealpha=0.95, fontsize=12.5)
     fig.tight_layout()
@@ -321,10 +321,11 @@ def fig_bifurcation(in_path: str, out_path: str):
             label=r"high-awake equilibrium ($\alpha^{(0)}\geq0.3$)")
     ax.plot(etas, a_lo, "s--", color="#d62728", ms=6, zorder=3,
             label=r"low-awake equilibrium ($\alpha^{(0)}=0.1$)")
-    ax.set_xlabel(r"interference coupling $\eta_I$")
-    ax.set_ylabel(r"MFE awake density $\alpha^\star$")
+    ax.set_xlabel(r"interference coupling $\eta_I$", fontsize=14)
+    ax.set_ylabel(r"MFE awake density $\alpha^\star$", fontsize=14)
     ax.set_ylim(0, 1.02)
-    ax.set_title(f"Equilibrium bifurcation ({d['layout']}, $N$={d['N']})")
+    ax.set_title(f"Equilibrium bifurcation ({d['layout']}, $N$={d['N']})",
+                 fontsize=14)
     ax.grid(True, ls="--", alpha=0.4)
     ax.legend(loc="lower left", fontsize=11.5)
     fig.tight_layout()
