@@ -243,7 +243,17 @@ def load_shanghai(cfg: SimCfg, shanghai_dir: Optional[str] = None) -> Optional[d
         interp = np.interp(x_out, x_in, prof)
         arrival_factor[i] = interp / max(np.mean(interp), 1e-9)
 
+    # Per-cell traffic intensity (total sessions over the day), normalized
+    # to mean 1, so downstream code can form real traffic-intensity blocks
+    # exactly as for Milan (the Shanghai busiest-N cells differ in load).
+    cell_total = hourly.sum(axis=1).astype(np.float64)
+    if cell_total.sum() > 0:
+        cell_intensity = cell_total / max(cell_total.mean(), 1e-9)
+    else:
+        cell_intensity = np.ones(N)
+
     return {"positions": positions, "arrival_factor": arrival_factor,
+             "cell_intensity": cell_intensity,
              "source": "Shanghai Telecom six-month session dataset",
              "top_lat_lon": np.column_stack([lats, lons])}
 

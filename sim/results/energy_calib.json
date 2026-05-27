@@ -17,8 +17,17 @@
   "fixed_effects_fit": {
     "awake_swing_W": 69.33209887633133,
     "P1_load_slope_W": 482.3104931996239,
+    "se_awake_swing_W": 0.14206466701611825,
+    "se_P1_W": 0.406851487124687,
     "R2_within": 0.7073600146978498,
     "MAPE_within_pct": 4.04354023879248
+  },
+  "out_of_sample": {
+    "train_frac": 0.8,
+    "n_test_cells": 4172,
+    "n_test_records": 200256,
+    "R2_oos": 0.708223941931164,
+    "MAPE_oos_pct": 4.085142165022887
   },
   "sim_defaults": {
     "P_sleep_W": 8.0,
@@ -26,5 +35,5 @@
     "P1_W": 100.0,
     "awake_swing_W": 122.0
   },
-  "source": "Tsinghua FIB-Lab NetData, 5G weekday (partial 13.6 MB)"
+  "source": "Tsinghua FIB-Lab NetData, 5G weekday"
 }

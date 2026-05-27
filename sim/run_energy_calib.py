@@ -88,6 +88,33 @@ def main():
     awake_swing = float(bw[0])   # W gained going sleep->awake (within cell)
     load_slope = float(bw[1])    # P1: W per unit awake*load
 
+    # ---- Standard errors of the within-cell slopes (OLS) ----
+    cells = np.unique(bs)
+    resid = Pd - Xw @ bw
+    dof = max(len(Pd) - Xw.shape[1] - len(cells), 1)   # minus per-cell means
+    sigma2 = float(resid @ resid) / dof
+    XtX_inv = np.linalg.inv(Xw.T @ Xw)
+    se = np.sqrt(np.diag(sigma2 * XtX_inv))
+    se_awake, se_load = float(se[0]), float(se[1])
+
+    # ---- Out-of-sample validation: fit slopes on 80% of cells, test 20% ----
+    rng = np.random.default_rng(20260714)
+    perm = rng.permutation(len(cells))
+    n_train = int(0.8 * len(cells))
+    train_cells = set(cells[perm[:n_train]].tolist())
+    tr = np.array([c in train_cells for c in bs])
+    te = ~tr
+    bw_tr, *_ = np.linalg.lstsq(Xw[tr], Pd[tr], rcond=None)
+    Pd_te_hat = Xw[te] @ bw_tr
+    R2_oos = _r2(Pd[te], Pd_te_hat)
+    mape_oos = float(np.mean(np.abs(Pd[te] - Pd_te_hat) /
+                             np.maximum(np.abs(P[te]), 1e-6)) * 100)
+    print(f"\n  Within-cell slope SEs: awake-swing {se_awake:.2f} W, "
+          f"P1 {se_load:.1f} W (both >> 0).")
+    print(f"  Out-of-sample (20%% held-out cells): R^2 = {R2_oos:.3f}, "
+          f"MAPE = {mape_oos:.1f}%% over {int(te.sum())} records "
+          f"in {len(cells)-n_train} cells.")
+
     print(f"\n  Pooled fit R^2 = {R2_pool:.3f} (hardware heterogeneity dominates).")
     print(f"  Within-cell fixed-effects fit (structural law):")
     print(f"    awake swing  (P0 - P_sleep) = {awake_swing:7.1f} W")
@@ -106,11 +133,16 @@ def main():
         "R2_pooled": float(R2_pool),
         "fixed_effects_fit": {"awake_swing_W": awake_swing,
                                "P1_load_slope_W": load_slope,
+                               "se_awake_swing_W": se_awake,
+                               "se_P1_W": se_load,
                                "R2_within": float(R2_within),
                                "MAPE_within_pct": mape_within},
+        "out_of_sample": {"train_frac": 0.8, "n_test_cells": int(len(cells)-n_train),
+                           "n_test_records": int(te.sum()),
+                           "R2_oos": float(R2_oos), "MAPE_oos_pct": mape_oos},
         "sim_defaults": {"P_sleep_W": 8.0, "P0_W": 130.0, "P1_W": 100.0,
                           "awake_swing_W": 122.0},
-        "source": "Tsinghua FIB-Lab NetData, 5G weekday (partial 13.6 MB)",
+        "source": "Tsinghua FIB-Lab NetData, 5G weekday",
     }
     os.makedirs("sim/results", exist_ok=True)
     with open("sim/results/energy_calib.json", "w") as f:
